@@ -1,0 +1,262 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import QuoteWidget from '../../components/QuoteWidget.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { siteConfig } from '../../../site.config';
+import { blogArticles, type BlogArticle } from '../../data/blog-articles';
+import { getAllCities } from '../../lib/cities';
+
+export function getStaticPaths() {
+  return blogArticles.map(article => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props as { article: BlogArticle };
+
+// Smart related articles: first by same category, then fill with others
+const sameCategory = blogArticles.filter(a => a.slug !== article.slug && a.category === article.category);
+const otherCategory = blogArticles.filter(a => a.slug !== article.slug && a.category !== article.category);
+const relatedArticles = [...sameCategory, ...otherCategory].slice(0, 5);
+const allOtherArticles = blogArticles.filter(a => a.slug !== article.slug);
+
+const title = article.metaTitle + " | " + siteConfig.name;
+const description = article.metaDescription;
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": article.title,
+    "description": article.metaDescription,
+    "image": "https://" + siteConfig.domain + article.image,
+    "datePublished": article.date + "T08:00:00+01:00",
+    "dateModified": "2026-06-01T10:00:00+01:00",
+    "author": {
+      "@type": "Organization",
+      "name": siteConfig.name,
+      "url": "https://" + siteConfig.domain
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": siteConfig.name,
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://" + siteConfig.domain + "/favicon.svg"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://" + siteConfig.domain + "/ratgeber/" + article.slug
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://" + siteConfig.domain },
+      { "@type": "ListItem", "position": 2, "name": "Ratgeber", "item": "https://" + siteConfig.domain + "/ratgeber" },
+      { "@type": "ListItem", "position": 3, "name": article.title },
+    ]
+  }
+];
+
+// Get 16 cities for cross-linking: top 8 + 8 random mid-tier for variety
+const allCities = getAllCities();
+const topCities = allCities.slice(0, 8);
+const midCities = allCities.slice(8, 40).sort(() => 0.5 - Math.random()).slice(0, 8);
+const crossLinkCities = [...topCities, ...midCities];
+---
+
+<BaseLayout title={title} description={description} canonical={"/ratgeber/" + article.slug} jsonLd={jsonLd}>
+  <section class="gradient-hero text-white py-12 md:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[
+        { label: "Ratgeber", href: "/ratgeber" },
+        { label: article.title, href: "/ratgeber/" + article.slug },
+      ]} />
+
+      <div class="grid lg:grid-cols-5 gap-10 items-start mt-6">
+        <div class="lg:col-span-3">
+          <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm mb-4">
+            <span>{article.emoji}</span>
+            <span>{article.category} • Aktualisiert: Juni 2026</span>
+          </div>
+
+          <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4 font-heading">
+            {article.title}
+          </h1>
+          <p class="text-blue-100 leading-relaxed mb-6 max-w-xl text-sm md:text-base">
+            {article.excerpt}
+          </p>
+
+          <div class="flex flex-wrap gap-3">
+            <div class="inline-flex items-center gap-2 text-xs text-blue-100/80 font-semibold bg-white/5 px-3 py-1.5 rounded-md">
+              <span>⏱️ Lesezeit: {article.readTime}</span>
+            </div>
+            <div class="inline-flex items-center gap-2 text-xs text-blue-100/80 font-semibold bg-white/5 px-3 py-1.5 rounded-md">
+              <span>📅 Veröffentlicht: {new Date(article.date).toLocaleDateString('de-DE', { year: 'numeric', month: 'long' })}</span>
+            </div>
+          </div>
+        </div>
+        <div class="lg:col-span-2">
+          <QuoteWidget keyword={article.title} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid lg:grid-cols-12 gap-8 items-start">
+      <!-- Article Content -->
+      <article class="lg:col-span-8 bg-white rounded-2xl border border-gray-200 shadow-sm p-6 md:p-10 prose prose-amber max-w-none text-gray-700 leading-relaxed">
+        <img src={article.image} alt={article.title} class="w-full h-80 object-cover rounded-2xl mb-8 border border-gray-100 shadow-sm" />
+        <div set:html={article.content} />
+
+        <!-- In-content cross-links (critical for SEO) -->
+        <div class="not-prose mt-10 pt-8 border-t border-gray-200">
+          <h2 class="text-lg font-bold text-gray-900 mb-4 font-heading">📚 Weiterführende Solar-Ratgeber</h2>
+          <div class="grid sm:grid-cols-2 gap-3">
+            {relatedArticles.map(a => (
+              <a href={`/ratgeber/${a.slug}`} class="flex items-start gap-3 bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-accent-500 hover:shadow-md transition-all group">
+                <span class="text-lg mt-0.5 flex-shrink-0">{a.emoji}</span>
+                <div>
+                  <span class="font-bold text-gray-900 group-hover:text-accent-600 text-sm block leading-snug">{a.title}</span>
+                  <span class="text-[10px] text-gray-500 mt-1 block">{a.readTime} Lesezeit • {a.category}</span>
+                </div>
+              </a>
+            ))}
+            <a href="/kostenrechner" class="flex items-start gap-3 bg-gradient-to-r from-blue-50 to-teal-50/30 rounded-xl p-4 border border-blue-200 hover:border-accent-500 hover:shadow-md transition-all group">
+              <span class="text-lg mt-0.5 flex-shrink-0">🧮</span>
+              <div>
+                <span class="font-bold text-gray-900 group-hover:text-accent-600 text-sm block leading-snug">Online-Kostenrechner</span>
+                <span class="text-[10px] text-gray-500 mt-1 block">PV-Kosten & Ertrag für Ihr Dach berechnen</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Sidebar -->
+      <aside class="lg:col-span-4 space-y-6">
+        <!-- CTA -->
+        <div class="cta-gradient rounded-2xl p-6 text-white text-center shadow-lg lg:sticky lg:top-24">
+          <h3 class="text-base font-bold mb-3 font-heading">☀️ Angebote vergleichen</h3>
+          <p class="text-xs text-blue-100 mb-4">Bis zu 3 kostenlose Angebote von geprüften Solarteuren aus Ihrer Region.</p>
+          <a href="/angebot" class="inline-block bg-white text-amber-600 font-bold px-6 py-3 rounded-xl hover:bg-gray-100 transition-colors text-sm shadow-md">
+            Angebote anfordern →
+          </a>
+        </div>
+
+        <!-- All Other Ratgeber (complete sidebar links) -->
+        <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+          <h3 class="text-sm font-bold text-gray-900 mb-3 font-heading">📚 Alle Solar-Ratgeber</h3>
+          <div class="space-y-2">
+            {allOtherArticles.map((a) => (
+              <a href={`/ratgeber/${a.slug}`} class="flex gap-2.5 group hover:bg-gray-50 rounded-lg p-2 -mx-2 transition-colors">
+                <span class="text-sm flex-shrink-0">{a.emoji}</span>
+                <div>
+                  <span class="block text-xs font-semibold text-gray-900 group-hover:text-accent-600 leading-snug">{a.title}</span>
+                  <span class="block text-[10px] text-gray-400 mt-0.5">{a.readTime}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+          <a href="/ratgeber" class="block text-center text-accent-600 hover:text-accent-500 font-semibold text-xs mt-3 transition-colors">Alle Ratgeber anzeigen →</a>
+        </div>
+
+        <!-- Quick links: Hersteller -->
+        <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+          <h3 class="text-sm font-bold text-gray-900 mb-3 font-heading">🏆 Führende Hersteller</h3>
+          <ul class="space-y-2">
+            <li><a href="/hersteller/meyer-burger" class="text-xs text-gray-700 hover:text-accent-600 transition-colors">🇨🇭 Meyer Burger — Premium-Module</a></li>
+            <li><a href="/hersteller/solarwatt" class="text-xs text-gray-700 hover:text-accent-600 transition-colors">🇩🇪 Solarwatt — Glas-Glas-Module</a></li>
+            <li><a href="/hersteller/sma-solar" class="text-xs text-gray-700 hover:text-accent-600 transition-colors">🇩🇪 SMA Solar — Wechselrichter</a></li>
+            <li><a href="/hersteller/fronius" class="text-xs text-gray-700 hover:text-accent-600 transition-colors">🇦🇹 Fronius — Speicherlösungen</a></li>
+            <li><a href="/hersteller/senec" class="text-xs text-gray-700 hover:text-accent-600 transition-colors">🇩🇪 Senec — High-End-Speicher</a></li>
+            <li><a href="/hersteller/jinkosolar" class="text-xs text-gray-700 hover:text-accent-600 transition-colors">🇨🇳 JinkoSolar — Weltmarktführer</a></li>
+          </ul>
+          <a href="/hersteller" class="block text-center text-accent-600 hover:text-accent-500 font-semibold text-xs mt-3 transition-colors">Hersteller-Übersicht →</a>
+        </div>
+
+        <!-- Quick links: Rechner -->
+        <a href="/kostenrechner" class="block bg-blue-900 text-white rounded-2xl border border-blue-950 p-5 hover:bg-blue-800 transition-all group shadow-md">
+          <span class="text-xl block mb-1">🧮</span>
+          <h3 class="font-bold text-sm text-amber-300 group-hover:text-amber-200">Kostenrechner</h3>
+          <p class="text-xs text-blue-200/80 mt-1">PV-Preise & Ertrag online berechnen.</p>
+        </a>
+
+        <!-- Nearby cities quick links -->
+        <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+          <h3 class="text-sm font-bold text-gray-900 mb-3 font-heading">📍 PV-Preise nach Stadt</h3>
+          <div class="grid grid-cols-2 gap-2">
+            {topCities.map(c => (
+              <a href={`/pv-anlage/${c.slug}`} class="text-xs text-gray-700 hover:text-accent-600 transition-colors py-1 truncate">
+                📍 {c.name}
+              </a>
+            ))}
+          </div>
+          <a href="/pv-anlage" class="block text-center text-accent-600 hover:text-accent-500 font-semibold text-xs mt-3 transition-colors">Alle Städte →</a>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Bottom cross-links (full width — SEO gold) -->
+    <div class="mt-12 space-y-8 border-t border-gray-200 pt-8">
+      
+      <!-- All Ratgeber Grid -->
+      <section>
+        <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4 font-heading">📚 Weitere Solar-Ratgeber entdecken</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {allOtherArticles.map(a => (
+            <a href={`/ratgeber/${a.slug}`} class="bg-white border border-gray-200 rounded-xl p-4 hover:border-accent-500 hover:shadow-md transition-all group">
+              <div class="flex items-start gap-3">
+                <span class="text-xl flex-shrink-0">{a.emoji}</span>
+                <div>
+                  <span class="font-bold text-gray-900 group-hover:text-accent-600 text-sm block leading-snug">{a.title}</span>
+                  <span class="text-[10px] text-gray-500 mt-1 block">{a.readTime} • {a.category}</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- 16 Cities Grid -->
+      <section>
+        <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4 font-heading">📍 Photovoltaik-Preise in Ihrer Stadt</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-3">
+          {crossLinkCities.map(c => (
+            <a href={`/pv-anlage/${c.slug}`} class="bg-white border border-gray-200 rounded-xl px-3 py-2.5 hover:border-accent-500 hover:shadow-md transition-all group text-center card-hover">
+              <span class="font-semibold text-gray-900 group-hover:text-accent-600 text-xs block">{c.name}</span>
+              <span class="text-[10px] text-gray-500">{c.zip}</span>
+            </a>
+          ))}
+        </div>
+        <div class="text-center mt-4">
+          <a href="/pv-anlage" class="text-accent-600 hover:text-accent-500 font-semibold text-sm transition-colors">Alle Städte →</a>
+        </div>
+      </section>
+
+      <!-- Tools & FAQ -->
+      <section class="grid sm:grid-cols-3 gap-4">
+        <a href="/faq" class="bg-white rounded-2xl border border-gray-200 p-6 hover:border-amber-400 hover:shadow-md transition-all group">
+          <span class="text-2xl block mb-2">❓</span>
+          <h3 class="font-bold text-base font-heading text-gray-900 group-hover:text-accent-600">Häufige Fragen (FAQ)</h3>
+          <p class="text-xs text-gray-600 mt-2">Antworten zu Kosten, Förderung und Technik.</p>
+        </a>
+        <a href="/kostenrechner" class="bg-white rounded-2xl border border-gray-200 p-6 hover:border-amber-400 hover:shadow-md transition-all group">
+          <span class="text-2xl block mb-2">🧮</span>
+          <h3 class="font-bold text-base font-heading text-gray-900 group-hover:text-accent-600">Online-Kostenrechner</h3>
+          <p class="text-xs text-gray-600 mt-2">PV-Kosten und Ersparnis berechnen.</p>
+        </a>
+        <a href="/angebot" class="bg-gradient-to-r from-teal-50 to-blue-50 rounded-2xl border border-teal-200 p-6 hover:border-accent-500 hover:shadow-md transition-all group">
+          <span class="text-2xl block mb-2">☀️</span>
+          <h3 class="font-bold text-base font-heading text-gray-900 group-hover:text-accent-600">Angebote vergleichen</h3>
+          <p class="text-xs text-gray-600 mt-2">Bis zu 3 kostenlose Angebote erhalten.</p>
+        </a>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,27 @@
+{
+  "name": "Kosten PV-Anlage",
+  "short_name": "PV-Kosten",
+  "description": "Was kostet eine PV-Anlage 2026? Preise pro kWp, Förderung & Angebote vergleichen.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#283593",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    }
+  ]
+}

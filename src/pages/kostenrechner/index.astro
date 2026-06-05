@@ -1,0 +1,385 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { siteConfig } from '../../../site.config';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Kostenrechner für Photovoltaik & Solaranlagen 2026",
+    "description": "Berechnen Sie kostenlos die Anschaffungskosten, die optimale Speichergröße und das jährliche Ersparnispotenzial Ihrer neuen Solaranlage.",
+    "url": "https://" + siteConfig.domain + "/kostenrechner",
+  }
+];
+---
+
+<BaseLayout
+  title={`Photovoltaik Kostenrechner 2026: Preise & Ertrag berechnen | ${siteConfig.name}`}
+  description={`Berechnen Sie in 2 Minuten die Kosten für Ihre Solaranlage mit Speicher, den erwarteten Solarertrag (kWh) und Ihre jährlichen Ersparnisse.`}
+  canonical="/kostenrechner"
+  jsonLd={jsonLd}
+>
+  <section class="gradient-hero text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[
+        { label: "Kostenrechner", href: "/kostenrechner" },
+      ]} />
+      <h1 class="text-3xl md:text-5xl font-extrabold mb-4 font-heading mt-6">
+        🧮 Photovoltaik Kosten- & Ertragsrechner
+      </h1>
+      <p class="text-blue-100 text-lg max-w-2xl">
+        Ermitteln Sie die Anschaffungskosten, das Einsparpotenzial und die Amortisationszeit für Ihr Solardach schlüsselfertig im Jahr 2026.
+      </p>
+    </div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid lg:grid-cols-12 gap-8 items-start">
+      <!-- Form Card -->
+      <div class="lg:col-span-7 bg-white rounded-2xl border border-gray-200 shadow-sm p-6 md:p-8 space-y-6">
+        <h2 class="text-xl font-bold text-gray-900 border-b border-gray-100 pb-3 font-heading flex items-center gap-2">
+          <span>📋</span> Ihre Projektdaten
+        </h2>
+
+        <div class="space-y-6">
+          <!-- Anlagengröße kWp -->
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label class="block text-sm font-semibold text-gray-900">
+                Größe der Solaranlage (Leistung):
+              </label>
+              <span class="font-data text-amber-600 font-extrabold text-lg" id="kwp-val">10 kWp</span>
+            </div>
+            <input
+              type="range"
+              id="kwp"
+              min="4"
+              max="20"
+              value="10"
+              step="1"
+              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
+            />
+            <div class="flex justify-between text-xs text-gray-500 px-1 mt-1">
+              <span>4 kWp (ca. 10 Module)</span>
+              <span>10 kWp (ca. 24 Module)</span>
+              <span>20 kWp (ca. 48 Module)</span>
+            </div>
+          </div>
+
+          <!-- Stromspeicher Kapazität -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-900 mb-2">Batteriespeicher (Kapazität):</label>
+            <div class="grid grid-cols-4 gap-2">
+              <label class="border-2 border-gray-200 hover:border-amber-400 rounded-xl p-3 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-white" id="storage-none-lbl">
+                <input type="radio" name="storage" value="0" class="hidden" />
+                <span class="text-lg">❌</span>
+                <span class="text-xs font-bold text-gray-900 mt-1">Kein Speicher</span>
+                <span class="text-[10px] text-gray-500">Eigenverbrauch ~30%</span>
+              </label>
+              <label class="border-2 border-gray-200 hover:border-amber-400 rounded-xl p-3 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-white" id="storage-5-lbl">
+                <input type="radio" name="storage" value="5" class="hidden" />
+                <span class="text-lg">🔋 5 kWh</span>
+                <span class="text-xs font-bold text-gray-900 mt-1">Kompakt-Speicher</span>
+                <span class="text-[10px] text-gray-500">Für Anlagen < 8 kWp</span>
+              </label>
+              <label class="border-2 border-amber-600 rounded-xl p-3 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-brand-50" id="storage-10-lbl">
+                <input type="radio" name="storage" value="10" checked class="hidden" />
+                <span class="text-lg">🔋 10 kWh</span>
+                <span class="text-xs font-bold text-gray-900 mt-1">Standard-Speicher</span>
+                <span class="text-[10px] text-gray-500">Der Bestseller</span>
+              </label>
+              <label class="border-2 border-gray-200 hover:border-amber-400 rounded-xl p-3 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-white" id="storage-15-lbl">
+                <input type="radio" name="storage" value="15" class="hidden" />
+                <span class="text-lg">🔋 15 kWh</span>
+                <span class="text-xs font-bold text-gray-900 mt-1">Groß-Speicher</span>
+                <span class="text-[10px] text-gray-500">Wärmepumpe/E-Auto</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Region / Standort -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-900 mb-2">Region (für Solar-Ertrag & Preise):</label>
+            <div class="grid grid-cols-4 gap-2">
+              <label class="border-2 border-amber-600 rounded-xl p-3 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-brand-50" id="region-south-lbl">
+                <input type="radio" name="region" value="south" checked class="hidden" />
+                <span class="text-lg">☀️ Süd</span>
+                <span class="text-xs font-bold text-gray-900 mt-1">Süddeutschland</span>
+                <span class="text-[10px] text-gray-500">BY, BW (~1800h)</span>
+              </label>
+              <label class="border-2 border-gray-200 hover:border-amber-400 rounded-xl p-3 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-white" id="region-center-lbl">
+                <input type="radio" name="region" value="center" class="hidden" />
+                <span class="text-lg">⛅ Mitte</span>
+                <span class="text-xs font-bold text-gray-900 mt-1">Mitteldeutschland</span>
+                <span class="text-[10px] text-gray-500">HE, NRW, RP (~1600h)</span>
+              </label>
+              <label class="border-2 border-gray-200 hover:border-amber-400 rounded-xl p-3 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-white" id="region-north-lbl">
+                <input type="radio" name="region" value="north" class="hidden" />
+                <span class="text-lg">☁️ Nord</span>
+                <span class="text-xs font-bold text-gray-900 mt-1">Norddeutschland</span>
+                <span class="text-[10px] text-gray-500">NDS, SH, HH (~1500h)</span>
+              </label>
+              <label class="border-2 border-gray-200 hover:border-amber-400 rounded-xl p-3 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-white" id="region-east-lbl">
+                <input type="radio" name="region" value="east" class="hidden" />
+                <span class="text-lg">🌤️ Ost</span>
+                <span class="text-xs font-bold text-gray-900 mt-1">Ostdeutschland</span>
+                <span class="text-[10px] text-gray-500">SN, ST, BB (~1600h)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Jährlicher Stromverbrauch -->
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label class="block text-sm font-semibold text-gray-900">
+                Jährlicher Stromverbrauch des Haushalts:
+              </label>
+              <span class="font-data text-amber-600 font-extrabold text-lg" id="consumption-val">4.500 kWh</span>
+            </div>
+            <input
+              type="range"
+              id="consumption"
+              min="2000"
+              max="10000"
+              value="4500"
+              step="500"
+              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
+            />
+            <div class="flex justify-between text-xs text-gray-500 px-1 mt-1">
+              <span>2.000 kWh (2 Personen)</span>
+              <span>4.500 kWh (Familie)</span>
+              <span>10.000 kWh (mit WP / E-Auto)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Card -->
+      <div class="lg:col-span-5 bg-blue-900 text-white rounded-2xl border border-blue-950 shadow-lg p-6 md:p-8 space-y-6">
+        <h2 class="text-xl font-bold text-amber-300 border-b border-blue-850 pb-3 font-heading flex items-center gap-2">
+          <span>✨</span> Berechnete Ergebnisse
+        </h2>
+
+        <!-- Solar Ertrag -->
+        <div class="flex justify-between items-center py-2 border-b border-blue-800/50">
+          <span class="text-sm text-blue-200/80">Jährlicher Solarertrag:</span>
+          <span class="font-data font-bold text-lg text-amber-300" id="result-generation">9.500 kWh</span>
+        </div>
+
+        <!-- Eigenverbrauchsanteil -->
+        <div class="flex justify-between items-center py-2 border-b border-blue-800/50">
+          <span class="text-sm text-blue-200/80">Eigenverbrauchsquote:</span>
+          <span class="font-bold text-sm text-blue-100" id="result-ratio">ca. 70%</span>
+        </div>
+
+        <!-- Investition schlüsselfertig -->
+        <div class="flex justify-between items-center py-2 border-b border-blue-800/50">
+          <span class="text-sm text-blue-200/80">Kosten schlüsselfertig (0% USt):</span>
+          <span class="font-data font-bold text-lg text-amber-300" id="result-cost">19.500 €</span>
+        </div>
+
+        <!-- Ersparnis & Einnahmen -->
+        <div class="space-y-2">
+          <span class="text-xs text-blue-200/60 block uppercase font-semibold">Einsparungen pro Jahr:</span>
+          <div class="bg-blue-950/60 rounded-xl p-4 space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-blue-200/80">Eingesparter Netzstrom (35ct):</span>
+              <span class="font-data font-bold text-green-400" id="result-self-savings">+ 1.102 €</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-blue-200/80">Einspeisevergütung (8,0ct):</span>
+              <span class="font-data font-bold text-green-400" id="result-feed-revenue">+ 508 €</span>
+            </div>
+            <div class="flex justify-between text-base border-t border-blue-800/50 pt-2 mt-2">
+              <span class="font-semibold text-white">Gesamtersparnis / Jahr:</span>
+              <span class="font-data font-bold text-green-400" id="result-annual-savings">1.610 €</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Amortisationszeit -->
+        <div class="bg-amber-600 rounded-xl p-5 text-center shadow-inner">
+          <span class="text-xs text-amber-100 block uppercase font-bold tracking-wider">Amortisationszeit (ROI)</span>
+          <span class="font-data font-extrabold text-3xl text-white block mt-1" id="result-roi">11,2 Jahre</span>
+          <span class="text-[10px] text-amber-100 block mt-1">Danach liefert die Solaranlage über 15 Jahre kostenfreien Strom!</span>
+        </div>
+
+        <!-- Autarkiegrad -->
+        <div class="bg-blue-950/40 border border-blue-800/30 rounded-xl p-4 text-center">
+          <span class="text-xs text-blue-200/80">Unabhängigkeit vom Stromnetz (Autarkie):</span>
+          <span class="block font-data font-bold text-xl text-amber-300 mt-1" id="result-autarkie">ca. 70% autark</span>
+          <span class="text-[10px] text-blue-200/70 mt-1 block">Sie erzeugen über zwei Drittel Ihres Strombedarfs selbst!</span>
+        </div>
+
+        <a href="/angebot" class="block w-full text-center cta-gradient text-white font-bold py-4 rounded-xl transition-all shadow-lg text-base">
+          ☀️ Angebote kostenlos vergleichen →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cross-links: Guides -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-gray-200">
+    <h2 class="text-xl font-bold text-gray-900 mb-4 font-heading">📚 Nützliche Solar-Ratgeber</h2>
+    <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <a href="/ratgeber/solaranlage-kosten-2026" class="bg-white rounded-xl p-4 border border-gray-200 hover:border-amber-400 hover:shadow-md transition-all group">
+        <span class="text-lg block mb-1">💰</span>
+        <span class="font-bold text-gray-900 group-hover:text-amber-600 text-sm block">Komplette PV-Preise 2026</span>
+      </a>
+      <a href="/ratgeber/photovoltaik-foerderung-2026" class="bg-white rounded-xl p-4 border border-gray-200 hover:border-amber-400 hover:shadow-md transition-all group">
+        <span class="text-lg block mb-1">🏛️</span>
+        <span class="font-bold text-gray-900 group-hover:text-amber-600 text-sm block">KfW-Förderprogramme</span>
+      </a>
+      <a href="/ratgeber/solaranlage-mit-speicher" class="bg-white rounded-xl p-4 border border-gray-200 hover:border-amber-400 hover:shadow-md transition-all group">
+        <span class="text-lg block mb-1">🔋</span>
+        <span class="font-bold text-gray-900 group-hover:text-amber-600 text-sm block">Wann lohnt ein Speicher?</span>
+      </a>
+      <a href="/ratgeber/photovoltaik-amortisation" class="bg-white rounded-xl p-4 border border-gray-200 hover:border-amber-400 hover:shadow-md transition-all group">
+        <span class="text-lg block mb-1">⚖️</span>
+        <span class="font-bold text-gray-900 group-hover:text-amber-600 text-sm block">PV Amortisations-Modelle</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Interactive script to power calculations -->
+  <script is:inline>
+    (function() {
+      const kwpInput = document.getElementById('kwp');
+      const kwpVal = document.getElementById('kwp-val');
+      const consumptionInput = document.getElementById('consumption');
+      const consumptionVal = document.getElementById('consumption-val');
+
+      const storages = document.getElementsByName('storage');
+      const regions = document.getElementsByName('region');
+
+      function updateRadioLabels(name, activeId) {
+        const els = document.getElementsByName(name);
+        els.forEach(el => {
+          const parent = el.closest('label');
+          if (parent) {
+            if (parent.id === activeId) {
+              parent.classList.remove('border-gray-200', 'hover:border-amber-400', 'bg-white');
+              parent.classList.add('border-amber-600', 'bg-brand-50');
+            } else {
+              parent.classList.remove('border-amber-600', 'bg-brand-50');
+              parent.classList.add('border-gray-200', 'hover:border-amber-400', 'bg-white');
+            }
+          }
+        });
+      }
+
+      function calculate() {
+        const kwp = parseInt(kwpInput.value);
+        kwpVal.textContent = kwp + ' kWp';
+
+        const consumption = parseInt(consumptionInput.value);
+        consumptionVal.textContent = consumption.toLocaleString('de-DE') + ' kWh';
+
+        let storageCapacity = 10;
+        storages.forEach(el => { if (el.checked) storageCapacity = parseInt(el.value); });
+
+        let region = 'south';
+        regions.forEach(el => { if (el.checked) region = el.value; });
+
+        // Ertrag pro kWp je nach Region
+        let yieldPerKwp = 950; // Mitteldeutschland
+        let priceMultiplier = 1.0;
+        if (region === 'south') {
+          yieldPerKwp = 1025;
+          priceMultiplier = 1.05;
+        } else if (region === 'north') {
+          yieldPerKwp = 875;
+          priceMultiplier = 0.95;
+        } else if (region === 'east') {
+          yieldPerKwp = 925;
+          priceMultiplier = 0.90;
+        }
+
+        const totalGeneration = Math.round(kwp * yieldPerKwp);
+
+        // Preiskalkulation Solaranlage
+        // 4 kWp -> ca. 6.500€, 10 kWp -> ca. 12.000€, 20 kWp -> ca. 22.000€ (Richtwerte)
+        const baseCost = kwp * 1150 + 2000;
+
+        // Speicher-Kosten
+        let storageCost = 0;
+        if (storageCapacity === 5) storageCost = 4500;
+        else if (storageCapacity === 10) storageCost = 7000;
+        else if (storageCapacity === 15) storageCost = 9500;
+
+        const totalCost = Math.round((baseCost + storageCost) * priceMultiplier);
+
+        // Eigenverbrauchsrate & Autarkiegrad
+        // Ohne Speicher: Eigenverbrauch max. 30%, Autarkie max. 30%
+        // Mit Speicher (5 kWh): Eigenverbrauch max. 55%, Autarkie max. 50%
+        // Mit Speicher (10 kWh): Eigenverbrauch max. 75%, Autarkie max. 70%
+        // Mit Speicher (15 kWh): Eigenverbrauch max. 80%, Autarkie max. 75%
+        let selfConsumptionRate = 0.30;
+        let autarkieRate = 0.30;
+
+        if (storageCapacity > 0) {
+          // Speichergröße im Verhältnis zur Anlagengröße anpassen
+          const ratio = storageCapacity / kwp;
+          if (ratio >= 1.5) {
+            selfConsumptionRate = 0.80;
+            autarkieRate = 0.75;
+          } else if (ratio >= 0.8) {
+            selfConsumptionRate = 0.72;
+            autarkieRate = 0.68;
+          } else {
+            selfConsumptionRate = 0.55;
+            autarkieRate = 0.50;
+          }
+        }
+
+        // Berechnung der Kilowattstunden
+        // Die tatsächlich nutzbare Solarenergie ist gedeckelt durch Erzeugung oder Verbrauch
+        const potentialSelfConsumed = totalGeneration * selfConsumptionRate;
+        const actualSelfConsumedKwh = Math.round(Math.min(potentialSelfConsumed, consumption * autarkieRate));
+        const feedInKwh = Math.round(Math.max(0, totalGeneration - actualSelfConsumedKwh));
+
+        // Ersparnisse
+        const electricityPrice = 0.35; // 35 Cent
+        const feedInTariff = 0.08; // 8 Cent
+
+        const selfSavings = Math.round(actualSelfConsumedKwh * electricityPrice);
+        const feedRevenue = Math.round(feedInKwh * feedInTariff);
+        const annualSavings = selfSavings + feedRevenue;
+
+        // ROI
+        const roiYears = totalCost / (annualSavings || 1);
+        const autarkiePct = Math.round((actualSelfConsumedKwh / consumption) * 100);
+
+        // DOM-Updates
+        document.getElementById('result-generation').textContent = totalGeneration.toLocaleString('de-DE') + ' kWh';
+        document.getElementById('result-ratio').textContent = `ca. ${Math.round(selfConsumptionRate * 100)}%`;
+        document.getElementById('result-cost').textContent = totalCost.toLocaleString('de-DE') + ' €';
+        document.getElementById('result-self-savings').textContent = `+ ${selfSavings.toLocaleString('de-DE')} €`;
+        document.getElementById('result-feed-revenue').textContent = `+ ${feedRevenue.toLocaleString('de-DE')} €`;
+        document.getElementById('result-annual-savings').textContent = `${annualSavings.toLocaleString('de-DE')} €`;
+        document.getElementById('result-roi').textContent = `${roiYears.toFixed(1)} Jahre`;
+        document.getElementById('result-autarkie').textContent = `ca. ${autarkiePct}% autark`;
+      }
+
+      kwpInput.addEventListener('input', calculate);
+      consumptionInput.addEventListener('input', calculate);
+
+      storages.forEach(el => {
+        el.addEventListener('change', (e) => {
+          updateRadioLabels('storage', e.target.closest('label').id);
+          calculate();
+        });
+      });
+
+      regions.forEach(el => {
+        el.addEventListener('change', (e) => {
+          updateRadioLabels('region', e.target.closest('label').id);
+          calculate();
+        });
+      });
+
+      calculate();
+    })();
+  </script>
+</BaseLayout>

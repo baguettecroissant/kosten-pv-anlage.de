@@ -1,0 +1,327 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import QuoteWidget from '../components/QuoteWidget.astro';
+import PriceTable from '../components/PriceTable.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import FAQ from '../components/FAQ.astro';
+import { siteConfig } from '../../site.config';
+import { getAllCities } from '../lib/cities';
+
+const topCities = getAllCities().slice(0, 20);
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": siteConfig.name,
+    "url": "https://" + siteConfig.domain,
+    "description": siteConfig.description,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": siteConfig.faq.map(f => ({
+      "@type": "Question",
+      "name": f.q,
+      "acceptedAnswer": { "@type": "Answer", "text": f.a }
+    }))
+  }
+];
+---
+
+<BaseLayout
+  title={siteConfig.niche.heroTitle + " | " + siteConfig.name}
+  description={siteConfig.description}
+  canonical="/"
+  jsonLd={jsonLd}
+>
+  <!-- Hero Section with Background Image -->
+  <section class="gradient-hero-image text-white py-16 md:py-24 relative overflow-hidden" style="--hero-bg: url('/images/hero.webp');">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <!-- Animated badge -->
+          <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm mb-6 sun-pulse font-semibold">
+            <span>☀️</span>
+            <span>0% Mehrwertsteuer auf Solaranlagen in DE</span>
+          </div>
+
+          <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-6 font-heading">
+            Photovoltaikanlage planen<br/>
+            <span class="text-amber-300">Kosten, Förderung & Angebote 2026</span>
+          </h1>
+          <p class="text-lg text-blue-100 leading-relaxed mb-8 max-w-lg">
+            {siteConfig.niche.heroSubtitle}
+          </p>
+
+          <!-- Counter -->
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 inline-block mb-6">
+            <span class="font-data text-2xl font-bold text-amber-300">1.482</span>
+            <span class="text-blue-100 text-sm ml-2">Anfragen in dieser Region diesen Monat</span>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            {siteConfig.trustBadges.map((badge) => (
+              <span class="bg-white/10 backdrop-blur-sm border border-white/20 px-3 py-1.5 rounded-full text-sm font-medium">
+                ✓ {badge}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div>
+          <QuoteWidget keyword={siteConfig.niche.name} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Intro Text -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-6 font-heading">
+        Warum lohnt sich eine eigene Solaranlage?
+      </h2>
+      <div class="text-gray-700 leading-relaxed space-y-4 text-sm md:text-base">
+        {siteConfig.introText.split('\n\n').map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+    <div class="bg-gray-50 rounded-2xl p-6 md:p-8 border border-gray-200">
+      <h3 class="text-xl font-bold text-gray-900 mb-4 font-heading">✅ Warum unser Portal nutzen?</h3>
+      <div class="grid sm:grid-cols-2 gap-4">
+        {siteConfig.whyChooseUs.map((item) => (
+          <div class="flex items-start gap-3">
+            <span class="text-amber-600 mt-0.5 font-bold">→</span>
+            <span class="text-sm text-gray-700 font-medium">{item}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <ProcessSteps />
+  </section>
+
+  <!-- Price Table -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <PriceTable />
+  </section>
+
+  <!-- Energy comparison (Netzstrom vs Solarstrom) -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="info-card rounded-xl p-6">
+      <h3 class="text-lg font-bold text-blue-900 mb-3 font-heading">💡 Wirtschaftlichkeits-Vergleich: Solarstrom vs. Netzstrom</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm price-table border-collapse rounded-xl overflow-hidden">
+          <thead>
+            <tr class="bg-blue-50 border-b border-blue-100">
+              <th class="px-4 py-3 text-left">Energiequelle</th>
+              <th class="px-4 py-3 text-left">Durchschnittlicher Preis / kWh</th>
+              <th class="px-4 py-3 text-left">Jährliche Kosten (4.500 kWh Bedarf)</th>
+              <th class="px-4 py-3 text-left">Preissicherheit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="font-bold bg-green-50/50">
+              <td class="px-4 py-3.5 text-green-700">🟢 Solarstrom (eigenes Dach)</td>
+              <td class="px-4 py-3.5">ca. 8 – 10 Cent</td>
+              <td class="px-4 py-3.5 price font-data text-green-600">ca. 360 – 450 €</td>
+              <td class="px-4 py-3.5 text-green-700">Garantiert fest für 25+ Jahre</td>
+            </tr>
+            <tr class="border-b border-gray-155">
+              <td class="px-4 py-3.5 text-gray-900">🔴 Netzstrom (Grundversorger)</td>
+              <td class="px-4 py-3.5">ca. 35 – 38 Cent</td>
+              <td class="px-4 py-3.5 font-data text-red-600">ca. 1.575 – 1.710 €</td>
+              <td class="px-4 py-3.5">Marktschwankungen ausgesetzt</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-blue-900/80 mt-3 font-semibold">
+        * Eigenverbrauchter Solarstrom spart Ihnen somit rund 27 Cent pro Kilowattstunde. Je höher Ihr Eigenverbrauch (z. B. durch einen Batteriespeicher), desto höher fällt Ihre jährliche Gesamtersparnis aus.
+      </p>
+    </div>
+  </section>
+
+  <!-- Subsidies Section -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h2 class="text-2xl font-bold text-gray-900 mb-2 font-heading">
+      🏛️ Staatliche Solar-Förderung & Steuervorteile 2026
+    </h2>
+    <p class="text-gray-650 text-sm mb-6">Profitieren Sie von gesetzlichen Anreizen und steuerlichen Erleichterungen in Deutschland:</p>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {siteConfig.subsidies.map((aid) => (
+        <div class="bg-white rounded-xl p-5 border border-gray-200 card-hover flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-gray-900 text-sm mb-1">{aid.name}</h3>
+            <p class="font-data text-lg font-bold text-amber-600 mb-2">{aid.amount}</p>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">{aid.condition}</p>
+        </div>
+      ))}
+    </div>
+    <div class="text-center mt-4">
+      <a href="/ratgeber/photovoltaik-foerderung-2026" class="text-accent-600 hover:text-accent-500 font-semibold text-sm transition-colors">
+        Ausführlicher Ratgeber zur Solarförderung →
+      </a>
+    </div>
+  </section>
+
+  <!-- Guides Section -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h2 class="text-2xl font-bold text-gray-900 mb-2 font-heading">
+      📚 Beliebte Ratgeber & Fachartikel
+    </h2>
+    <p class="text-gray-650 text-sm mb-6">Informieren Sie sich vorab umfassend rund um Planung und Installation:</p>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <a href="/ratgeber/solaranlage-kosten-2026" class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group card-hover">
+        <img src="/images/blog/pv-kosten-2026.png" alt="Was kostet eine Solaranlage" class="w-full h-32 object-cover" />
+        <div class="p-4">
+          <span class="text-[10px] font-bold text-accent-600 uppercase tracking-wider">💰 Preise</span>
+          <h3 class="font-bold text-gray-900 group-hover:text-accent-600 text-sm mt-1 leading-snug">Was kostet eine Solaranlage 2026?</h3>
+          <p class="text-xs text-gray-500 mt-1">Kompletter Preisüberblick & Kostenbestandteile</p>
+        </div>
+      </a>
+      <a href="/ratgeber/photovoltaik-foerderung-2026" class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group card-hover">
+        <img src="/images/blog/pv-foerderung-2026.png" alt="Photovoltaik Förderung" class="w-full h-32 object-cover" />
+        <div class="p-4">
+          <span class="text-[10px] font-bold text-accent-600 uppercase tracking-wider">🏛️ Förderung</span>
+          <h3 class="font-bold text-gray-900 group-hover:text-accent-600 text-sm mt-1 leading-snug">Photovoltaik-Förderung 2026</h3>
+          <p class="text-xs text-gray-500 mt-1">KfW-Zuschüsse richtig beantragen</p>
+        </div>
+      </a>
+      <a href="/ratgeber/solaranlage-mit-speicher" class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group card-hover">
+        <img src="/images/blog/pv-speicher.png" alt="Solaranlage mit Speicher" class="w-full h-32 object-cover" />
+        <div class="p-4">
+          <span class="text-[10px] font-bold text-accent-600 uppercase tracking-wider">🔋 Speicher</span>
+          <h3 class="font-bold text-gray-900 group-hover:text-accent-600 text-sm mt-1 leading-snug">Lohnt sich eine PV mit Speicher?</h3>
+          <p class="text-xs text-gray-500 mt-1">Wirtschaftlichkeit & Eigenverbrauchserhöhung</p>
+        </div>
+      </a>
+      <a href="/ratgeber/photovoltaik-amortisation" class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group card-hover">
+        <img src="/images/blog/pv-amortisation.png" alt="Photovoltaik Amortisation" class="w-full h-32 object-cover" />
+        <div class="p-4">
+          <span class="text-[10px] font-bold text-accent-600 uppercase tracking-wider">⚖️ Wirtschaftlichkeit</span>
+          <h3 class="font-bold text-gray-900 group-hover:text-accent-600 text-sm mt-1 leading-snug">Photovoltaik-Amortisation</h3>
+          <p class="text-xs text-gray-500 mt-1">Wann rechnet sich Ihre eigene Anlage?</p>
+        </div>
+      </a>
+    </div>
+    <div class="text-center mt-6">
+      <a href="/ratgeber" class="text-accent-600 hover:text-accent-500 font-semibold text-sm transition-colors">
+        Alle Ratgeber-Artikel ansehen →
+      </a>
+    </div>
+  </section>
+
+  <!-- Hersteller -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h2 class="text-2xl font-bold text-gray-900 mb-2 font-heading">
+      🏆 Führende Modulhersteller & Speicher-Marken
+    </h2>
+    <p class="text-gray-650 text-sm mb-6">Wichtige Systemhersteller im deutschen Solarmarkt 2026:</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+      <a href="/hersteller/meyer-burger" class="bg-white border border-gray-200 rounded-xl px-4 py-5 hover:border-accent-500 hover:shadow-md transition-all group text-center card-hover">
+        <span class="text-xl block mb-1">🇨🇭</span>
+        <span class="font-bold text-gray-900 group-hover:text-accent-600 text-sm block">Meyer Burger</span>
+        <span class="text-xs text-gray-500 mt-0.5 block">Premium</span>
+      </a>
+      <a href="/hersteller/solarwatt" class="bg-white border border-gray-200 rounded-xl px-4 py-5 hover:border-accent-500 hover:shadow-md transition-all group text-center card-hover">
+        <span class="text-xl block mb-1">🇩🇪</span>
+        <span class="font-bold text-gray-900 group-hover:text-accent-600 text-sm block">Solarwatt</span>
+        <span class="text-xs text-gray-500 mt-0.5 block">Glas-Glas</span>
+      </a>
+      <a href="/hersteller/sma-solar" class="bg-white border border-gray-200 rounded-xl px-4 py-5 hover:border-accent-500 hover:shadow-md transition-all group text-center card-hover">
+        <span class="text-xl block mb-1">🇩🇪</span>
+        <span class="font-bold text-gray-900 group-hover:text-accent-600 text-sm block">SMA Solar</span>
+        <span class="text-xs text-gray-500 mt-0.5 block">Wechselrichter</span>
+      </a>
+      <a href="/hersteller/fronius" class="bg-white border border-gray-200 rounded-xl px-4 py-5 hover:border-accent-500 hover:shadow-md transition-all group text-center card-hover">
+        <span class="text-xl block mb-1">🇦🇹</span>
+        <span class="font-bold text-gray-900 group-hover:text-accent-600 text-sm block">Fronius</span>
+        <span class="text-xs text-gray-500 mt-0.5 block">Österreich</span>
+      </a>
+      <a href="/hersteller/senec" class="bg-white border border-gray-200 rounded-xl px-4 py-5 hover:border-accent-500 hover:shadow-md transition-all group text-center card-hover">
+        <span class="text-xl block mb-1">🇩🇪</span>
+        <span class="font-bold text-gray-900 group-hover:text-accent-600 text-sm block">Senec</span>
+        <span class="text-xs text-gray-500 mt-0.5 block">Speicherlösung</span>
+      </a>
+      <a href="/hersteller/jinkosolar" class="bg-white border border-gray-200 rounded-xl px-4 py-5 hover:border-accent-500 hover:shadow-md transition-all group text-center card-hover">
+        <span class="text-xl block mb-1">🇨🇳</span>
+        <span class="font-bold text-gray-900 group-hover:text-accent-600 text-sm block">JinkoSolar</span>
+        <span class="text-xs text-gray-500 mt-0.5 block">Weltmarktführer</span>
+      </a>
+    </div>
+    <div class="text-center mt-6">
+      <a href="/hersteller" class="text-accent-600 hover:text-accent-500 font-semibold text-sm transition-colors">
+        Hersteller-Vergleich & Testberichte →
+      </a>
+    </div>
+  </section>
+
+  <!-- Rechner CTA -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <a href="/kostenrechner" class="block bg-blue-900 text-white rounded-2xl border border-blue-950 p-6 md:p-8 hover:bg-blue-800 transition-all group shadow-md text-center">
+      <span class="text-3xl block mb-2">🧮</span>
+      <h3 class="font-bold text-xl md:text-2xl font-heading text-accent-400 group-hover:text-accent-500">Kosten & Ertrag online berechnen</h3>
+      <p class="text-sm text-blue-200/80 mt-2 max-w-lg mx-auto">Berechnen Sie in 2 Minuten Ihre voraussichtlichen Investitionskosten und jährlichen Ersparnisse für Ihr Dach.</p>
+      <span class="inline-block mt-4 bg-white text-accent-600 font-bold px-6 py-3 rounded-xl shadow text-sm">⚡ Kostenrechner starten →</span>
+    </a>
+  </section>
+
+  <!-- City Grid -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h2 class="text-2xl font-bold text-gray-900 mb-2 font-heading">
+      📍 Solar-Angebote in Ihrer Region vergleichen
+    </h2>
+    <p class="text-gray-650 mb-6">Finden Sie geprüfte Solar-Fachbetriebe direkt in Ihrer Nähe:</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+      {topCities.map((city) => (
+        <a
+          href={"/pv-anlage/" + city.slug}
+          class="bg-white border border-gray-200 rounded-xl px-4 py-3 hover:border-accent-500 hover:shadow-md transition-all group text-center card-hover"
+        >
+          <span class="font-semibold text-gray-900 group-hover:text-accent-600 text-sm">{city.name}</span>
+          <span class="block text-xs text-gray-500 mt-0.5">{city.zip}</span>
+        </a>
+      ))}
+    </div>
+    <div class="text-center mt-6">
+      <a href="/pv-anlage" class="text-accent-600 hover:text-accent-500 font-semibold text-sm transition-colors">
+        Alle Städte ansehen →
+      </a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <FAQ items={siteConfig.faq} />
+    <div class="text-center mt-4">
+      <a href="/faq" class="text-accent-600 hover:text-accent-500 font-semibold text-sm transition-colors">
+        Alle FAQ-Fragen anzeigen →
+      </a>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="cta-gradient rounded-2xl p-8 md:p-12 text-center text-white">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4 font-heading">
+        Bereit für Ihre eigene PV-Anlage?
+      </h2>
+      <p class="text-blue-100 mb-6 max-w-lg mx-auto">
+        Erhalten Sie bis zu 3 Angebote von geprüften Solarteuren aus Ihrer Region. Komplett kostenlos, unverbindlich und in wenigen Klicks.
+      </p>
+      <a href="/angebot" class="inline-block bg-white text-accent-600 font-bold px-8 py-4 rounded-xl hover:bg-gray-100 transition-colors shadow-lg text-lg">
+        ☀️ Jetzt Angebote kostenlos vergleichen
+      </a>
+    </div>
+  </section>
+</BaseLayout>

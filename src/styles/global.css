@@ -1,0 +1,221 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* === PALETTE "INDIGO-TEAL" — Design System kosten-pv-anlage.de === */
+@theme {
+  /* Brand-Indigo — Seriosität/Daten */
+  --color-brand-50: #E8EAF6;
+  --color-brand-100: #C5CAE9;
+  --color-brand-200: #9FA8DA;
+  --color-brand-500: #283593;
+  --color-brand-600: #3949AB;
+  --color-brand-700: #283593;
+  --color-brand-800: #1A237E;
+  --color-brand-900: #0D1B2A;
+
+  /* Accent-Teal — CTA und Energie */
+  --color-accent-400: #26A69A;
+  --color-accent-500: #00BFA5;
+  --color-accent-600: #00897B;
+
+  /* Gelb/Gold — Sonne und Akzente */
+  --color-amber-400: #FFD54F;
+  --color-amber-500: #FFC107;
+  --color-amber-600: #FFB300;
+
+  /* Statusfarben */
+  --color-success: #43A047;
+  --color-warning: #FFB300;
+
+  /* Dark backgrounds */
+  --color-dark: #1A1A1A;
+}
+
+/* === TYPOGRAPHIE === */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Work Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #1A1A1A;
+  background-color: #F5F5F5;
+}
+
+h1, h2, h3, h4, h5, h6,
+.font-heading {
+  font-family: 'Lexend', system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+}
+
+.font-data,
+.font-mono {
+  font-family: 'Source Code Pro', 'Courier New', monospace;
+}
+
+/* === HERO GRADIENT — Indigo mit Teal Overlay === */
+.gradient-hero {
+  background: linear-gradient(135deg, rgba(40, 53, 147, 0.97) 0%, rgba(57, 73, 171, 0.92) 50%, rgba(40, 53, 147, 0.97) 100%);
+  padding-top: 5.5rem !important; /* Spacing for the transparent navbar */
+}
+
+.gradient-hero-image {
+  background-image: var(--hero-bg, none);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  padding-top: 6.5rem !important; /* Extra spacing for the homepage hero */
+}
+.gradient-hero-image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(40, 53, 147, 0.95), rgba(0, 191, 165, 0.82));
+  z-index: 0;
+}
+.gradient-hero-image > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* === CTA GRADIENT — Teal === */
+.cta-gradient {
+  background: linear-gradient(135deg, #00BFA5, #26A69A);
+}
+.cta-gradient:hover {
+  background: linear-gradient(135deg, #00897B, #00BFA5);
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(0, 191, 165, 0.4);
+}
+
+/* === SECTION GRADIENT === */
+.section-gradient {
+  background: linear-gradient(180deg, #F5F5F5 0%, #E8EAF6 100%);
+}
+
+/* === MICRO-ANIMATIONS === */
+
+/* Pulsieren der Sonne / Badges */
+@keyframes sun-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+.sun-pulse {
+  animation: sun-pulse 3s ease-in-out infinite;
+}
+
+/* Entrée progressive des sections */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  animation: fade-up 0.5s ease-out both;
+}
+
+/* Compteur animé */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.count-up {
+  animation: count-up 0.7s ease-out both;
+  animation-delay: 0.2s;
+}
+
+/* Cards hover effect */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(40, 53, 147, 0.08), 0 8px 10px -6px rgba(40, 53, 147, 0.05);
+  border-color: #9FA8DA;
+}
+
+/* CTA button arrow animation */
+@keyframes arrow-bounce {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+}
+.arrow-animate:hover .arrow-icon {
+  animation: arrow-bounce 0.6s ease-in-out infinite;
+}
+
+/* === FAQ Accordion === */
+details summary {
+  cursor: pointer;
+  list-style: none;
+}
+details summary::-webkit-details-marker {
+  display: none;
+}
+details[open] summary .faq-chevron {
+  transform: rotate(180deg);
+}
+.faq-chevron {
+  transition: transform 0.25s ease;
+}
+
+/* === Price Cards — Teal Left Border === */
+.price-card {
+  border-left: 4px solid #00BFA5;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.price-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 191, 165, 0.15);
+}
+
+/* === Info Cards === */
+.info-card {
+  background: #E8EAF6;
+  border-left: 4px solid #283593;
+}
+
+/* === Price tables === */
+.price-table th {
+  background: #E8EAF6;
+  color: #283593;
+  font-family: 'Lexend', sans-serif;
+  font-weight: 700;
+}
+.price-table td.price {
+  font-family: 'Source Code Pro', monospace;
+  color: #00897B;
+  font-weight: 600;
+}
+.price-table tr:nth-child(even) {
+  background: #F5F5F5;
+}
+
+/* === Navbar scroll effect === */
+.navbar-scroll {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.navbar-scrolled {
+  background-color: rgba(40, 53, 147, 0.98) !important;
+  box-shadow: 0 4px 20px rgba(40, 53, 147, 0.2);
+}
+
+/* === Footer === */
+.footer-bg {
+  background-color: #1A1A1A;
+  color: #F5F5F5;
+}
+
+/* === Sticky CTA Animation === */
+.sticky-cta-enter {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* === DSGVO Cookie Banner === */
+.cookie-banner {
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
+}
